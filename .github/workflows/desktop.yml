@@ -1,7 +1,8 @@
 # Monta o instalador do Windows (AUTOMATON-Setup.exe) num Windows de verdade.
-# - push que mexe no jogo ou no desktop: gera o instalador como "artifact" (aba Actions)
-# - tag v* (ex.: v3.0.5): também cria a Release no GitHub com o instalador pra baixar
-#   e, se os segredos do itch.io estiverem configurados, manda pro itch.io
+# - push na main: monta e publica a Release "v<versão do package.json>" com o instalador
+#   (versão nova = suba o "version" no package.json; a mesma versão só troca o arquivo)
+# - outras branches: só gera o instalador como "artifact" (aba Actions)
+# - se os segredos do itch.io estiverem configurados, a Release também vai pro itch.io
 name: Desktop (Windows)
 
 on:
@@ -44,9 +45,11 @@ jobs:
         run: npx electron-builder --win nsis --x64 --publish never
 
       - name: Pasta pronta pra Steam (SteamPipe)
+        id: ver
         shell: pwsh
         run: |
           $v = (Get-Content package.json | ConvertFrom-Json).version
+          "version=$v" >> $env:GITHUB_OUTPUT
           Compress-Archive -Path dist/win-unpacked/* -DestinationPath "dist/AUTOMATON-Steam-$v.zip"
 
       - name: Guardar o instalador (aba Actions)
@@ -59,15 +62,24 @@ jobs:
           retention-days: 30
 
       - name: Publicar a Release no GitHub
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          name: AUTOMATON ${{ github.ref_name }}
+          tag_name: v${{ steps.ver.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          name: AUTOMATON ${{ steps.ver.outputs.version }}
           files: dist/AUTOMATON-Setup-*.exe
-          generate_release_notes: true
+          make_latest: true
+          body: |
+            ## 📥 Como instalar
+            1. Baixe o **AUTOMATON-Setup-${{ steps.ver.outputs.version }}.exe** aqui embaixo.
+            2. Abra e siga o instalador.
+            3. Jogue pelo atalho **AUTOMATON**.
+
+            Se o Windows mostrar "O Windows protegeu o computador": **Mais informações → Executar assim mesmo**.
 
       - name: Enviar pro itch.io (opcional)
-        if: startsWith(github.ref, 'refs/tags/v') && env.BUTLER_API_KEY != '' && vars.ITCH_GAME != ''
+        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) && env.BUTLER_API_KEY != '' && vars.ITCH_GAME != ''
         shell: pwsh
         run: |
           Invoke-WebRequest -Uri https://broth.itch.zone/butler/windows-amd64/LATEST/archive/default -OutFile butler.zip

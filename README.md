@@ -51,4 +51,4 @@ Modelos, sons, texturas e fontes de terceiros estão em **[CREDITOS.md](CREDITOS
 
 ---
 
-<sub>Pra montar o instalador a partir deste código: <code>npm install</code> e depois <code>npm run dist</code>. O GitHub também monta sozinho em <b>Actions</b>, e ao criar uma tag <code>v*</code> publica a Release.</sub>
+<sub>Pra montar o instalador a partir deste código: <code>npm install</code> e depois <code>npm run dist</code>. A cada envio na <code>main</code>, o GitHub monta o instalador e publica a Release da versão que está no <code>package.json</code>.</sub>
