@@ -1,0 +1,78 @@
+# Monta o instalador do Windows (AUTOMATON-Setup.exe) num Windows de verdade.
+# - push que mexe no jogo ou no desktop: gera o instalador como "artifact" (aba Actions)
+# - tag v* (ex.: v3.0.5): também cria a Release no GitHub com o instalador pra baixar
+#   e, se os segredos do itch.io estiverem configurados, manda pro itch.io
+name: Desktop (Windows)
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+    paths:
+      - 'index.html'
+      - 'css/**'
+      - 'js/**'
+      - 'lib/**'
+      - 'assets/**'
+      - 'electron/**'
+      - 'build/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/desktop.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    env:
+      BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar Electron e o empacotador
+        run: npm ci
+
+      - name: Montar o instalador
+        run: npx electron-builder --win nsis --x64 --publish never
+
+      - name: Pasta pronta pra Steam (SteamPipe)
+        shell: pwsh
+        run: |
+          $v = (Get-Content package.json | ConvertFrom-Json).version
+          Compress-Archive -Path dist/win-unpacked/* -DestinationPath "dist/AUTOMATON-Steam-$v.zip"
+
+      - name: Guardar o instalador (aba Actions)
+        uses: actions/upload-artifact@v4
+        with:
+          name: AUTOMATON-Windows
+          path: |
+            dist/AUTOMATON-Setup-*.exe
+            dist/AUTOMATON-Steam-*.zip
+          retention-days: 30
+
+      - name: Publicar a Release no GitHub
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: AUTOMATON ${{ github.ref_name }}
+          files: dist/AUTOMATON-Setup-*.exe
+          generate_release_notes: true
+
+      - name: Enviar pro itch.io (opcional)
+        if: startsWith(github.ref, 'refs/tags/v') && env.BUTLER_API_KEY != '' && vars.ITCH_GAME != ''
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri https://broth.itch.zone/butler/windows-amd64/LATEST/archive/default -OutFile butler.zip
+          Expand-Archive butler.zip -DestinationPath butler
+          $v = (Get-Content package.json | ConvertFrom-Json).version
+          New-Item -ItemType Directory -Force itch | Out-Null
+          Copy-Item dist/AUTOMATON-Setup-*.exe itch/
+          ./butler/butler.exe push itch "${{ vars.ITCH_GAME }}:windows" --userversion $v

@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AUTOMATON v2 · KX-7</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script type="importmap">
+    { "imports": { "three": "./lib/three.module.js", "three/addons/": "./lib/addons/" } }
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+
+  <!-- engrenagem reaproveitada -->
+  <svg width="0" height="0" style="position:absolute">
+    <symbol id="gear" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="23" fill="none" stroke="currentColor" stroke-width="9" stroke-dasharray="7.2 7.25" />
+      <circle cx="32" cy="32" r="17" fill="none" stroke="currentColor" stroke-width="6" />
+      <circle cx="32" cy="32" r="5" fill="currentColor" />
+    </symbol>
+  </svg>
+
+  <!-- carregando -->
+  <div id="loading" class="screen">
+    <div class="boot-box">
+      <div class="brand"><svg><use href="#gear" /></svg>AUTOMATON</div>
+      <div class="boot-log" id="boot-log"></div>
+      <div class="load-track"><div id="load-bar"></div></div>
+      <div id="load-text">inicializando…</div>
+    </div>
+  </div>
+
+  <!-- menu principal -->
+  <div id="menu" class="hidden">
+    <div class="menu-bg"></div>
+    <aside class="menu-left">
+      <div class="sys-tag"><span class="led"></span>planeta kx-7 · ano 2187 · v3.0</div>
+      <div class="title-row">
+        <svg><use href="#gear" /></svg>
+        <h1 class="title">AUTO<span class="t-accent">MATON</span></h1>
+      </div>
+      <div class="title-bar"></div>
+      <div class="typeline"><span id="typed"></span><span class="caret">▌</span></div>
+      <nav class="menu-nav" id="menu-nav">
+        <button class="mi primary-mi" id="btn-play" data-panel="home"><span class="mi-n">01</span><span class="mi-t" id="play-label">Continuar</span><span class="mi-d" id="play-sub"></span></button>
+        <button class="mi" id="btn-free" data-panel="livre"><span class="mi-n">02</span><span class="mi-t">Modo Livre</span><span class="mi-d">novo planeta</span></button>
+        <button class="mi locked-mi" id="btn-story" data-panel="historia"><span class="mi-n">03</span><span class="mi-t">Modo História</span><span class="mi-d">🔒 em breve</span></button>
+        <button class="mi" data-panel="howto"><span class="mi-n">04</span><span class="mi-t">Como jogar</span><span class="mi-d">guia</span></button>
+        <button class="mi" data-panel="settings"><span class="mi-n">05</span><span class="mi-t">Configurações</span><span class="mi-d"></span></button>
+        <button class="mi" data-panel="credits"><span class="mi-n">06</span><span class="mi-t">Créditos</span><span class="mi-d">cc0 · cc-by</span></button>
+        <button class="mi" id="btn-quit" style="display:none"><span class="mi-n">07</span><span class="mi-t">Sair</span><span class="mi-d">fechar o jogo</span></button>
+      </nav>
+      <div class="menu-foot">
+        ↑ ↓ navegar · enter selecionar<br>
+        three.js · linguagem jiboia 🐍 · assets kenney / quaternius / kay lousberg / poly haven
+      </div>
+    </aside>
+
+    <section class="menu-right">
+      <!-- início -->
+      <div class="mpanel show" data-panel="home">
+        <div class="card-x">
+          <div class="card-h"><span id="save-title">// fábrica 1</span><b id="save-state">—</b></div>
+          <div id="save-card"></div>
+          <div class="slots" id="slots"></div>
+        </div>
+        <div class="card-x">
+          <div class="card-h"><span>// pc1 · executando</span><b id="term-clock">2 instr/s</b></div>
+          <div class="term" id="term"></div>
+          <div class="term-out" id="term-out"></div>
+        </div>
+        <div class="card-x">
+          <div class="card-h"><span>// dica</span><b id="tip-n">01</b></div>
+          <div class="tip" id="tip"></div>
+        </div>
+      </div>
+
+      <!-- modo livre: onde pousar -->
+      <div class="mpanel" data-panel="livre">
+        <div class="card-x">
+          <div class="card-h"><span>// modo livre · escolha onde pousar</span><b id="nw-slot">fábrica 1</b></div>
+          <div class="nw-wrap">
+            <div class="nw-areas" id="nw-areas"></div>
+            <div class="nw-map"><canvas id="nw-canvas" width="180" height="180"></canvas><div class="nw-legend" id="nw-legend"></div></div>
+          </div>
+          <div class="nw-seed"><label>Semente do planeta <input id="nw-seed" maxlength="24" spellcheck="false"></label><button id="nw-dice" class="mini">🎲 outra</button></div>
+          <div class="muted nw-note">A mesma semente gera sempre o mesmo planeta: passe a sua pro amigo jogar no mesmo mundo. O mapa tem 5 áreas; 3 delas servem pra pousar.</div>
+          <div class="row"><button id="nw-go" class="primary big">🚀 Pousar em KX-7</button></div>
+          <p class="muted" id="nw-warn"></p>
+        </div>
+      </div>
+
+      <!-- modo história (ainda bloqueado) -->
+      <div class="mpanel" data-panel="historia">
+        <div class="card-x story-card">
+          <div class="card-h"><span>// modo história</span><b>🔒 em breve</b></div>
+          <div class="story-art">🪐</div>
+          <p><b>Capítulo 1 · O Sinal de Júpiter</b></p>
+          <p class="muted">Uma campanha guiada, com missões, personagens e os segredos de KX-7, ainda em construção. Enquanto isso, o <b>Modo Livre</b> já tem o planeta inteiro pra você.</p>
+        </div>
+      </div>
+
+      <!-- novo jogo -->
+      <div class="mpanel" data-panel="newgame">
+        <div class="card-x confirm-box">
+          <div class="card-h"><span>// novo jogo</span><b>atenção</b></div>
+          <p id="new-text">Começar uma fábrica nova do zero.</p>
+          <div class="row">
+            <button id="new-cancel">Cancelar</button>
+            <button id="new-confirm" class="primary">Começar do zero</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- como jogar -->
+      <div class="mpanel" data-panel="howto">
+        <div class="card-x">
+          <div class="card-h"><span>// como jogar</span><b>5 passos</b></div>
+          <ol class="steps">
+            <li><span>Monte a <b>Central</b> perto da cápsula. Ela tem os <b>Marcos</b> (tiers) e a <b>Bancada</b>.</span></li>
+            <li><span>Segure <kbd>E</kbd> num veio pra minerar na mão, e em árvores e plantas pra coletar madeira, folhas e fibra.</span></li>
+            <li><span>Monte <b>Gerador de Biomassa</b>, <b>Fornalha</b> e <b>Minerador</b>, ligue com o <b>🔌 Cabo</b>, escolha a receita e aperte <b>LIGAR</b>.</span></li>
+            <li><span>Pague os <b>Marcos</b> com itens pra liberar máquinas novas. Tudo custa itens: não tem dinheiro.</span></li>
+            <li><span>Programe em <b>Jiboia</b> no <b>Computador</b> pra controlar, organizar e <b>turbinar</b> a fábrica.</span></li>
+          </ol>
+        </div>
+        <div class="card-x">
+          <div class="card-h"><span>// controles</span></div>
+          <div class="keys">
+            <kbd>W A S D</kbd><span>andar</span><kbd>Shift</kbd><span>correr</span>
+            <kbd>Ctrl</kbd><span>deslizar correndo</span><kbd>Espaço</kbd><span>pular / sair do deslize</span>
+            <kbd>1</kbd><span>🔌 cabo</span><kbd>2</kbd><span>🧱 construção</span>
+            <kbd>3-9</kbd><span>escolher peça</span><kbd>F</kbd><kbd>T</kbd><span>peça / material da construção</span>
+            <kbd>Clique</kbd><span>colocar / usar</span><kbd>R</kbd><span>girar peça (fundação: subir)</span>
+            <kbd>E</kbd><span>usar · segurar: coletar</span><kbd>X</kbd><span>desmontar peça</span>
+            <kbd>B</kbd><span>menu de construção</span><kbd>H</kbd><span>guia</span>
+            <kbd>Tab</kbd><span>mapa</span><kbd>Esc</kbd><span>pausa</span>
+            <kbd>K</kbd><span>estatísticas</span><kbd>Ctrl+Z</kbd><span>desfazer</span>
+            <kbd>C</kbd><span>copiar grupo</span><kbd>V</kbd><span>colar grupo</span>
+            <kbd>P</kbd><span>modo foto</span><kbd>F10</kbd><span>passo (depurador)</span>
+            <kbd>J</kbd><span>📐 projetos salvos</span><kbd>O</kbd><span>🌐 jogar junto (multiplayer)</span>
+            <kbd>F</kbd><span>no Oopi: tarefas</span><kbd>🎮</kbd><span>controle funciona também</span>
+          </div>
+          <div class="muted" style="margin-top:8px;font-size:12.5px">Dá pra trocar as teclas em <b>Configurações</b>.</div>
+        </div>
+        <div class="row"><button class="primary" id="menu-guide">📖 Abrir o guia completo</button><button id="menu-tutorial" style="display:none"></button></div>
+      </div>
+
+      <!-- configurações -->
+      <div class="mpanel" data-panel="settings">
+        <div class="card-x">
+          <div class="card-h"><span>// áudio</span></div>
+          <div class="set-list">
+            <label class="set-row">Música<input type="range" data-setting="music" min="0" max="1" step="0.05"><output></output></label>
+            <label class="set-row">Efeitos<input type="range" data-setting="sfx" min="0" max="1" step="0.05"><output></output></label>
+            <label class="set-row">Ambiente<input type="range" data-setting="ambience" min="0" max="1" step="0.05"><output></output></label>
+          </div>
+        </div>
+        <div class="card-x">
+          <div class="card-h"><span>// controles e vídeo</span></div>
+          <div class="set-list">
+            <label class="set-row">Sensibilidade<input type="range" data-setting="sens" min="0.2" max="2" step="0.05"><output></output></label>
+            <label class="set-row">Campo de visão<input type="range" data-setting="fov" min="55" max="95" step="1"><output></output></label>
+            <div class="set-row"><span>Pet Oopi</span><span class="seg" id="set-pet"><button data-v="1">Ligado</button><button data-v="0">Desligado</button></span><output></output></div>
+            <div class="set-row"><span>Mostrar FPS</span><span class="seg" id="set-fps"><button data-v="1">Ligado</button><button data-v="0">Desligado</button></span><output></output></div>
+            <div class="set-row"><span>Autocompletar</span><span class="seg" id="set-ac"><button data-v="1">Ligado</button><button data-v="0">Desligado</button></span><output></output></div>
+            <label class="set-row">Fonte do editor<input type="range" data-setting="edFont" min="11" max="22" step="1"><output></output></label>
+            <label class="set-row">Daltonismo<select id="set-cb" class="set-select"></select><output></output></label>
+            <label class="set-row">Controle 🎮<input type="range" data-setting="padSens" min="0.4" max="2.5" step="0.1"><output></output></label>
+            <div class="set-row"><span>Qualidade</span>
+              <div class="seg" id="quality-seg">
+                <button data-q="baixa">Baixa</button><button data-q="media">Média</button><button data-q="alta">Alta</button>
+              </div><output id="quality-out"></output>
+            </div>
+          </div>
+        </div>
+        <div class="card-x">
+          <div class="card-h"><span>// teclas</span><button id="keys-reset" class="mini">restaurar padrão</button></div>
+          <div class="muted" style="font-size:12.5px;margin-bottom:8px">Clique numa tecla e aperte a nova. Esc cancela. Se a tecla já era de outra ação, as duas trocam.</div>
+          <div id="keys-list" class="keys-list"></div>
+        </div>
+      </div>
+
+      <!-- créditos -->
+      <div class="mpanel" data-panel="credits">
+        <div class="card-x">
+          <div class="card-h"><span>// créditos</span><b>obrigado!</b></div>
+          <div class="credit-list">
+            <div><span>modelos 3d e efeitos sonoros</span>Kenney.nl: Factory, Space, Space Station, Nature e Furniture Kit (CC0)</div>
+            <div><span>modelos 3d de KX-7 (v2)</span>Quaternius (CC0): painel solar, rochas, agulha de pedra, cristal, montanhas, poste de luz, torre de antena, domo · Kay Lousberg (CC0): broca, carga, turbina, módulo de pouso · via Poly Pizza</div>
+            <div><span>drone (v2)</span>"Drone" por NateGazzard (CC BY 3.0), via Poly Pizza</div>
+            <div><span>texturas</span>Poly Haven (CC0): Cracked Red Ground · céu de KX-7 desenhado por código</div>
+            <div><span>quadros (domínio público)</span>Wikimedia Commons: Van Gogh, Hokusai, Monet, Vermeer e Almeida Júnior</div>
+            <div><span>música</span>"Trilha de KX-7": tema único composto por código e tocado ao vivo (Web Audio), feito pro jogo</div>
+            <div><span>som ambiente</span>Forest Ambience e Rain Loop (Ylmir), OpenGameArt.org (CC0)</div>
+            <div><span>fontes</span>Big Shoulders Display, Barlow, JetBrains Mono (SIL OFL)</div>
+            <div><span>motor</span>three.js (MIT)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="menu-status"><span class="on">● servidor local</span><span class="amber" id="menu-track">♪ —</span></div>
+  </div>
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="stats">
+      <div class="lvl-badge"><span>tier</span><b id="level">0</b></div>
+      <div class="stat-col">
+        <div id="money">$ 0</div>
+        <div class="xp-track"><div id="xpbar"></div><span id="xptext"></span></div>
+        <div id="cpu">⚡ 2 instr/s</div>
+        <div id="tokens">🎟️ 0</div>
+      </div>
+    </div>
+    <div id="combo" class="hidden"></div>
+    <div id="tutorial" class="hidden"></div>
+    <div id="music">
+      <span id="clock">☀️ 08:00</span>
+      <span class="note">♪</span><span id="track">—</span>
+      <button id="music-toggle" title="Pausar música">⏸</button>
+      <button id="music-next" title="Próxima (M)">⏭</button>
+    </div>
+    <div id="skyline"></div>
+    <div id="objective"></div>
+    <div id="movement" class="hud-box">
+      <div class="movement-top"><span id="move-state">PASSO</span><span><b id="move-speed">0,0</b> m/s</span></div>
+      <div class="momentum-track"><div id="momentum-bar"></div></div>
+      <div class="movement-keys">Shift correr · Ctrl deslizar · Espaço pular</div>
+      <div id="coffee-status" class="hidden"></div>
+    </div>
+    <div id="fps" class="hidden">— fps</div>
+    <button id="mp-hud" class="mini">🌐</button>
+    <div id="visit-banner">👀 Visitando a fábrica de <b id="visit-name">—</b> · nada é salvo <button id="visit-home" class="mini">⌂ Voltar pra minha fábrica</button></div>
+    <div id="crosshair"></div>
+    <div id="prompt"></div>
+    <div id="buildhint"></div>
+    <div id="hotbar"></div>
+    <div id="toasts"></div>
+  </div>
+
+  <div id="photo-hint" class="hidden"><b>📷 MODO FOTO</b> · <kbd>WASD</kbd> voar · <kbd>Espaço</kbd>/<kbd>C</kbd> subir/descer · <kbd>Shift</kbd> rápido · roda: zoom · <kbd>F</kbd> tirar foto · <kbd>T</kbd> congelar tempo · <kbd>N</kbd> avançar horário · <kbd>H</kbd> esconder dica · <kbd>P</kbd> sair</div>
+  <div id="photo-flash"></div>
+
+  <div id="mfx" class="hidden"></div>
+  <div id="land-ready" class="hidden"><div class="lr-box"><div class="lr-tag">planeta pronto</div><div class="lr-planet" id="lr-planet">KX-0000</div><div class="lr-area" id="lr-area">—</div><button id="land-go" class="primary big">🚀 Pousar</button><div class="lr-hint">clique pra começar a descida</div></div></div>
+
+  <div id="clickToPlay" class="hidden"><div>🖱️ Clique para continuar</div></div>
+
+  <!-- editor -->
+  <div id="editor" class="overlay hidden">
+    <div class="win ed-win">
+      <div class="ed-head">
+        <div id="ed-title">🐍 pc1</div>
+        <div id="ed-status"></div>
+        <div class="grow"></div>
+        <span id="ed-cpu"></span>
+        <select id="ed-examples"><option value="">📚 Exemplos…</option></select>
+        <button id="ed-pause" title="Pausar (depurador)">⏸</button>
+        <button id="ed-step" title="Rodar 1 instrução (F10)">⏭ Passo</button>
+        <button id="ed-resume" class="primary">▶ Continuar</button>
+        <button id="ed-run" class="primary">▶ Executar</button>
+        <button id="ed-stop">■ Parar</button>
+        <button id="ed-close" class="x">✕</button>
+      </div>
+      <div class="ed-body">
+        <div class="ed-code">
+          <div class="gutter-wrap"><pre id="gutter"></pre></div>
+          <div class="code-wrap">
+            <div id="exec-line"></div>
+            <div id="err-line"></div>
+            <pre id="code-hl" aria-hidden="true"></pre>
+            <textarea id="code" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off"></textarea>
+            <div id="ac" class="hidden"></div>
+          </div>
+        </div>
+        <div class="ed-right">
+          <div class="ed-tabs">
+            <button class="ed-tab active" data-tab="console">Console</button>
+            <button class="ed-tab" data-tab="manual">Manual</button>
+            <button class="ed-tab" data-tab="guia">Guia</button>
+            <button class="ed-tab" data-tab="maquinas">Máquinas</button>
+            <button class="ed-tab" data-tab="depurar">Depurar</button>
+            <button class="ed-tab" data-tab="libs">Bibliotecas</button>
+            <button class="ed-tab" data-tab="hardware">⚙ Hardware</button>
+          </div>
+          <div id="ed-side"><div id="console"></div></div>
+        </div>
+      </div>
+      <div class="ed-foot"><span id="ed-lint"></span><span class="grow"></span><label class="ed-check"><input type="checkbox" id="ed-ac-toggle"> autocompletar</label><span><kbd>Ctrl+Enter</kbd> executar · <kbd>Tab</kbd> indentar · <kbd>Esc</kbd> fechar (o programa continua rodando)</span></div>
+    </div>
+  </div>
+
+  <!-- loja -->
+  <div id="shop" class="overlay hidden">
+    <div class="win shop-win">
+      <div class="shop-head">
+        <div class="shop-title">🛒 Loja</div>
+        <div class="shop-tabs">
+          <button class="shop-tab" data-tab="maquinas">Máquinas</button>
+          <button class="shop-tab" data-tab="melhorias">Melhorias</button>
+          <button class="shop-tab" data-tab="decoracao">Decoração</button>
+          <button class="shop-tab" data-tab="escritorio">Escritório</button>
+          <button class="shop-tab" data-tab="quadros">Quadros</button>
+          <button class="shop-tab" data-tab="fichas">🎟️ Fichas</button>
+          <button class="shop-tab" data-tab="materiais">Materiais</button>
+          <button class="shop-tab" data-tab="mercado">Mercado</button>
+          <button class="shop-tab" data-tab="receitas">Receitas</button>
+        </div>
+        <div class="grow"></div>
+        <span id="shop-level"></span>
+        <span id="shop-money"></span>
+        <button id="shop-close" class="x">✕</button>
+      </div>
+      <div id="shop-body"></div>
+    </div>
+  </div>
+
+  <!-- painel de máquina -->
+  <div id="panel" class="overlay hidden">
+    <div class="win panel-win">
+      <div class="panel-head">
+        <img id="panel-img">
+        <div>
+          <div id="panel-type"></div>
+          <label>Nome: <input id="panel-name" maxlength="20"></label>
+        </div>
+        <div class="grow"></div>
+        <button id="panel-close" class="x">✕</button>
+      </div>
+      <div id="panel-desc"></div>
+      <div id="panel-info"></div>
+      <div class="panel-sub">Use no código:</div>
+      <div id="panel-api"></div>
+      <div class="panel-actions">
+        <button id="panel-rotate">↻ Girar</button>
+        <button id="panel-pick">📦 Guardar</button>
+        <button id="panel-guide">📖 Como funciona?</button>
+        <button id="panel-research" class="primary">🔬 Pesquisas</button>
+      </div>
+      <div class="panel-actions" id="panel-extra"></div>
+      <div class="panel-actions">
+        <button id="panel-upgrade" class="primary">⬆ Melhorar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- pausa -->
+  <div id="pause" class="overlay hidden">
+    <div class="ide">
+      <div class="ide-tabs"><span class="ide-tab on">◆ menu.jib</span><span class="ide-tab dim">fabrica.jib</span><div class="grow"></div><span class="ide-hint">↑↓ escolher · Enter rodar · Esc continuar</span></div>
+      <div class="ide-code" id="pause-code">
+        <div class="ln cm-line"><span class="no">1</span><span class="code"><span class="cm" id="pause-head"># KX-7 · pausa</span></span></div>
+        <button class="ln" id="btn-resume"><span class="no">2</span><span class="code"><span class="fn">continuar</span>()</span><span class="cm"># volta pro jogo</span></button>
+        <button class="ln" id="btn-save"><span class="no">3</span><span class="code"><span class="fn">salvar</span>()</span><span class="cm"># também salva sozinho a cada 30 s</span></button>
+        <button class="ln" id="btn-map"><span class="no">4</span><span class="code"><span class="fn">mapa</span>()</span><span class="cm"># Tab</span></button>
+        <button class="ln" id="btn-guide"><span class="no">5</span><span class="code"><span class="fn">guia</span>()</span><span class="cm"># H</span></button>
+        <button class="ln" id="btn-stats"><span class="no">6</span><span class="code"><span class="fn">estatisticas</span>()</span></button>
+        <button class="ln" id="btn-projects"><span class="no">7</span><span class="code"><span class="fn">projetos</span>()</span><span class="cm"># plantas salvas pra colar</span></button>
+        <button class="ln" id="btn-mp"><span class="no">8</span><span class="code"><span class="fn">jogar_junto</span>(<span class="str">"sala"</span>)</span><span class="cm"># multiplayer</span></button>
+        <button class="ln" id="btn-settings"><span class="no">9</span><span class="code"><span class="fn">configuracoes</span>()</span><span class="cm" id="set-fold"># ▸ abrir</span></button>
+        <div class="ide-fold hidden" id="pause-settings">
+          <label class="set-row"><span><span class="kw">musica</span> =</span><input type="range" data-setting="music" min="0" max="1" step="0.05"><output></output></label>
+          <label class="set-row"><span><span class="kw">efeitos</span> =</span><input type="range" data-setting="sfx" min="0" max="1" step="0.05"><output></output></label>
+          <label class="set-row"><span><span class="kw">ambiente</span> =</span><input type="range" data-setting="ambience" min="0" max="1" step="0.05"><output></output></label>
+          <label class="set-row"><span><span class="kw">sensibilidade</span> =</span><input type="range" data-setting="sens" min="0.2" max="2" step="0.05"><output></output></label>
+          <label class="set-row"><span><span class="kw">campo_visao</span> =</span><input type="range" data-setting="fov" min="55" max="95" step="1"><output></output></label>
+          <button class="ln sub hidden" id="btn-fullscreen"><span class="code">&nbsp;&nbsp;<span class="fn">tela_cheia</span>()</span><span class="cm"># F11 ou Alt+Enter</span></button>
+          <button class="ln sub" id="btn-allsettings"><span class="code">&nbsp;&nbsp;<span class="fn">mais_opcoes</span>()</span><span class="cm"># qualidade, teclas, acessibilidade</span></button>
+        </div>
+        <button class="ln" id="btn-menu"><span class="no">10</span><span class="code"><span class="fn">sair_para_titulo</span>()</span></button>
+        <button class="ln hidden" id="btn-quit-game"><span class="no">11</span><span class="code"><span class="fn">sair_do_jogo</span>()</span><span class="cm"># salva e fecha</span></button>
+        <button class="ln danger" id="btn-reset"><span class="no">11</span><span class="code"><span class="fn">recomecar</span>()</span><span class="cm"># apaga tudo!</span></button>
+        <button class="ln hidden" id="btn-friends"><span class="no">·</span><span class="code"><span class="fn">amigos</span>()</span></button>
+      </div>
+      <div class="ide-term">
+        <div class="ide-term-head">terminal</div>
+        <div id="pause-term"></div>
+        <div class="term-prompt">&gt; <span class="caret">▍</span></div>
+      </div>
+      <div class="ide-status"><span>Jiboia 🐍</span><span id="pause-ln">Ln 2, Col 1</span><div class="grow"></div><span>UTF-8</span><span>KX-7</span></div>
+    </div>
+  </div>
+  <!-- guia -->
+  <div id="guide" class="overlay hidden">
+    <div class="win guide-win">
+      <div class="shop-head"><div class="shop-title">Guia</div><div class="grow"></div><span class="muted">H ou Esc fecha</span><button id="guide-close" class="x">✕</button></div>
+      <div id="guide-body"></div>
+    </div>
+  </div>
+
+  <!-- janela genérica (pesquisa, foguete, estatísticas, mapa) -->
+  <div id="xwin" class="overlay hidden">
+    <div class="win x-win">
+      <div class="shop-head"><div class="shop-title" id="xwin-title">—</div><div class="grow"></div><span class="muted" id="xwin-hint">Esc fecha</span><button id="xwin-close" class="x">✕</button></div>
+      <div id="xwin-body"></div>
+    </div>
+  </div>
+
+  <!-- confirmação -->
+  <div id="confirm" class="overlay hidden">
+    <div class="win confirm-win">
+      <div class="win-head"><span class="pause-title" id="confirm-title">—</span></div>
+      <div class="confirm-body" id="confirm-body"></div>
+      <div class="row confirm-row"><button id="confirm-no">Não</button><button id="confirm-yes" class="primary">Sim</button></div>
+    </div>
+  </div>
+
+  <div id="levelup" class="hidden"></div>
+
+  <script src="lib/peerjs.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

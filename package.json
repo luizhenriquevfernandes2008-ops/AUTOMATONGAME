@@ -1,0 +1,55 @@
+{
+  "name": "automaton",
+  "productName": "AUTOMATON",
+  "version": "3.0.5",
+  "description": "AUTOMATON: fábrica automatizada com programação em Jiboia no planeta KX-7",
+  "author": "Luiz Henrique",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis --x64 --publish never",
+    "dist:dir": "electron-builder --win dir --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.5.1",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "com.automaton.kx7",
+    "productName": "AUTOMATON",
+    "copyright": "AUTOMATON",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": [
+      "index.html",
+      "css/**",
+      "js/**",
+      "lib/**",
+      "assets/**",
+      "electron/**",
+      "build/icon.png",
+      "package.json"
+    ],
+    "asar": true,
+    "compression": "maximum",
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "build/icon.ico",
+      "artifactName": "AUTOMATON-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "AUTOMATON",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "language": "1046"
+    }
+  }
+}
