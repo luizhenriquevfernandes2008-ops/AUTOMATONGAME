@@ -7,6 +7,7 @@ import { ores, purity, key } from './machines.js';
 import { addStatic, setStaticScale } from './staticBatch.js';
 import { game } from './state.js';
 import { mulberry32 } from './noise.js';
+import { puff } from './fx.js';
 import {
   world, createWorld, heightAt, slopeAt, weightsAt, biomeAt, BIOMES, BIOME_KEYS, START_BIOMES, HALF, WATER, flattenAt,
   buildTerrainMeshes, makeTerrainMaterial, buildWater, inMap,
@@ -157,13 +158,33 @@ function buildPod() {
   const px = s.x - 3, pz = s.z + 2;
   const y = heightAt(px, pz);
   const pod = cloneModel('pod3');
-  pod.position.set(px, y - 0.1, pz);
+  pod.position.set(px, y - 0.05, pz);
   pod.rotation.y = -2.0; // escotilha virada pro lugar onde você aparece
   game.scene.add(pod);
-  colliders.push({ x: px, z: pz, r: 1.8 });
+  // a nave é comprida: um círculo no meio e um em cada ponta (bico e motores)
+  const ax = Math.cos(pod.rotation.y), az = -Math.sin(pod.rotation.y);
+  colliders.push({ x: px, z: pz, r: 2.0 }, { x: px + ax * 2.6, z: pz + az * 2.6, r: 1.3 }, { x: px - ax * 2.4, z: pz - az * 2.4, r: 1.3 });
   game.pod = pod;
+  pod.updateMatrixWorld(true);
+  game.podSmoke = pod.getObjectByName('smoke');
+  game.podGlow = pod.getObjectByName('glow');
+  if (game.podGlow) game.podGlow.material = game.podGlow.material.clone();
   game.spawn = new THREE.Vector3(s.x + 2.5, 0, s.z + 4.5);
   game.spawnYaw = Math.atan2(px - game.spawn.x, pz - game.spawn.z) + Math.PI;
+}
+
+// nave caída: fumacinha saindo do motor e a luz de emergência piscando
+let podT = 0, smokeT = 0;
+const _sp = new THREE.Vector3();
+export function updatePod(dt) {
+  if (!game.pod) return;
+  podT += dt; smokeT -= dt;
+  if (game.podGlow) game.podGlow.material.emissiveIntensity = Math.sin(podT * 4) > 0.3 ? 2.2 : 0.15;
+  if (game.podSmoke && smokeT <= 0 && game.camera.position.distanceToSquared(game.pod.position) < 120 * 120) {
+    smokeT = 0.35;
+    game.podSmoke.getWorldPosition(_sp);
+    puff(_sp, { color: 0x5a5e66, count: 1, size: 0.7, up: 1.1, spread: 0.25, life: 3.2, opacity: 0.35, grow: 3 });
+  }
 }
 
 // ─── consultas usadas pelo resto do jogo ───

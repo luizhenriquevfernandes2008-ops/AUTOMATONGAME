@@ -18,8 +18,9 @@ export function guideHTML() {
 <li class="sub">🏜️ <b>Cânion Vermelho</b> (média): mesas de pedra, cânions fundos; ferro e cobre <b>puros</b>, quartzo, pouca planta.</li>
 <li class="sub">❄️ <b>Tundra Gelada</b> (difícil): planalto de neve, lagos congelados, as auroras mais fortes; muito carvão e calcário.</li>
 <li><b>Semente</b>: cada semente (ex.: <kbd>KX-2744</kbd>) gera sempre o mesmo planeta. Use 🎲 pra sortear ou digite a de um amigo.</li>
-<li><b>Pousar em KX-7</b>: a cápsula desce do céu, e você começa ao lado dela com um <b>kit</b>: placas e hastes de ferro, parafusos, fios, cabos, concreto e biomassa.</li>
+<li><b>Pousar em KX-7</b>: sua nave cai no planeta e você começa do lado dela, com um <b>kit</b> que sobrou dos destroços: placas e hastes de ferro, parafusos, fios, cabos, concreto e biomassa.</li>
 </ol>
+<p>Quem te acompanha é o <b>🐾 TÊTÊ</b>, um bichinho de KX-7 com cara de pug e anteninhas que brilham. Ele anda por perto, mas na dele: fareja, senta, deita e brinca sozinho. Aperte <kbd>E</kbd> nele pra fazer carinho e <kbd>F</kbd> pra pedir uma tarefa (colher a horta, buscar meteoritos, levar itens).</p>
 <p>O planeta tem mais <b>dois biomas pra explorar</b> (não dá pra pousar neles): <b>Campos de Cristal</b> (Cristal KX) e <b>Pântano Luminoso</b> (Luminita). Os recursos raros só existem lá.</p>
 <h3>2. Coletar com a ferramenta</h3>
 <p>Segure <b><kbd>E</kbd></b> (ou o botão esquerdo) mirando:</p>

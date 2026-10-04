@@ -279,7 +279,7 @@ function drawMap(c) {
     if (e.name && s > 9) { g.fillStyle = '#ece5d5'; g.font = '10px "JetBrains Mono", monospace'; g.fillText(e.name, x, z - 2); }
   }
   for (const d of game.drones || []) { g.fillStyle = '#9fd8ff'; g.beginPath(); g.arc(X(d.p.x / CELL), Z(d.p.z / CELL), Math.max(3, s * 0.35), 0, Math.PI * 2); g.fill(); }
-  // pedrinhas de meteorito e o Oopi
+  // pedrinhas de meteorito e o TÊTÊ
   for (const pk of game.events?.pickups || []) { g.fillStyle = '#b18cff'; g.beginPath(); g.arc(X(pk.x / CELL), Z(pk.z / CELL), Math.max(2.5, s * 0.25), 0, Math.PI * 2); g.fill(); }
   if (game.pet?.obj.visible) { g.fillStyle = '#ff6ec7'; g.font = `${Math.max(12, s)}px sans-serif`; g.fillText('🤖', X(game.pet.p.x / CELL) - 6, Z(game.pet.p.z / CELL) + 5); }
   // jogador
@@ -291,10 +291,10 @@ function drawMap(c) {
   g.strokeStyle = '#fff'; g.lineWidth = 1.5; g.stroke();
 }
 
-// ─────────────── Oopi: humor e tarefas ───────────────
+// ─────────────── TÊTÊ: humor e tarefas ───────────────
 export function renderPet(el) {
   const pet = game.pet;
-  if (!pet || !pet.obj.visible) { el.innerHTML = '<p class="muted">O Oopi está desligado nas Configurações.</p>'; return; }
+  if (!pet || !pet.obj.visible) { el.innerHTML = '<p class="muted">O TÊTÊ está desligado nas Configurações.</p>'; return; }
   const ripe = game.entities.filter((e) => e.type === 'canteiro' && e.ready).length;
   const rocks = (game.events?.pickups || []).length;
   const sources = game.entities.filter((e) => e.isMachine && e.name && (e.type === 'bau' || e.type === 'venda' || e.out?.length || e.type === 'canteiro'));
@@ -307,7 +307,7 @@ export function renderPet(el) {
     <div class="pet-top">
       <img src="${thumbs.estatua || ''}" alt="">
       <div>
-        <div class="pet-name">Oopi <span class="muted">· robozinho assistente</span></div>
+        <div class="pet-name">TÊTÊ <span class="muted">· pug espacial de KX-7</span></div>
         <div class="pet-mood">Humor: <b>${pet.moodText}</b></div>
         <div class="progress-line pet-bar"><i style="width:${Math.round(pet.mood * 100)}%"></i></div>
         <div class="muted" style="font-size:12.5px">Carinho (<kbd>E</kbd> nele) e tarefas deixam ele feliz. Ele comemora quando a fábrica bate recorde 🏆</div>
@@ -330,7 +330,7 @@ export function renderPet(el) {
         <label>Item <select id="pet-item"><option value="">qualquer</option>${Object.keys(ITEMS).map((k) => `<option value="${k}">${ITEMS[k].nome}</option>`).join('')}</select></label>
         <label>Pra <select id="pet-to">${opt(targets)}</select></label>
         <label>Quantos <select id="pet-n"><option>1</option><option selected>5</option><option>10</option><option>20</option></select></label>
-        <button id="pet-go" ${sources.length && targets.length ? '' : 'disabled'}>Vai, Oopi!</button>
+        <button id="pet-go" ${sources.length && targets.length ? '' : 'disabled'}>Vai, TÊTÊ!</button>
       </div>
       <div class="muted" style="font-size:12.5px;margin-top:6px">Ele pega de baús, caixas de venda, canteiros e da saída das máquinas, e entrega em qualquer máquina que aceite o item.</div>
     </div>

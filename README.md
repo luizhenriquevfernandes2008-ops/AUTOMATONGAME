@@ -23,6 +23,7 @@
 - **Marcos e o Projeto Foguete:** sem loja e sem dinheiro. Tudo sai do que você produz.
 - **Programação:** computadores rodando **Jiboia**, uma linguagem em português parecida com Python, que controlam e turbinam as máquinas.
 - **Céu vivo:** Júpiter chegando perto, duas luas, eclipses, auroras, chuva de meteoros e flora que brilha à noite.
+- **🐾 TÊTÊ**, um bichinho de KX-7 com cara de pug e anteninhas que brilham. Anda por perto, fareja, deita, ganha carinho e até faz tarefinhas.
 - **Jogar junto** com um amigo, ligando os PCs direto.
 
 ## ⌨️ Controles principais

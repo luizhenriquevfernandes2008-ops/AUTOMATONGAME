@@ -1144,7 +1144,7 @@ export function refreshBeltsAround(x, z) {
 game.floorAt = (x, z) => { const f = foundations.get(x + ',' + z); return f === undefined ? null : f; };
 
 export function findByName(name) {
-  if (name === 'oopi' && game.pet?.obj.visible) return game.pet; // o Oopi também obedece programas (amizade nível 2)
+  if ((name === 'tete' || name === 'têtê' || name === 'oopi') && game.pet?.obj.visible) return game.pet; // o TÊTÊ também obedece programas (amizade nível 2); "oopi" dos programas antigos
   return game.entities.find((e) => e.name === name && e.isMachine) || (game.drones || []).find((d) => d.name === name && !d.removed);
 }
 

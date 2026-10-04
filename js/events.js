@@ -282,7 +282,7 @@ export function collectPickup(p, by = 'jogador') {
   audio.play('glass', { volume: 0.6, rate: 1.4 });
   const at = p.obj.position.clone();
   puff(at, { color: 0xb18cff, count: 12, size: 0.18, up: 1.6, gravity: 3, additive: true, life: 0.9 });
-  floatText(at.add(new THREE.Vector3(0, 0.5, 0)), `+${n} Fragmento Estelar${by === 'oopi' ? ' (Oopi)' : ''}`, '#c9a8ff');
+  floatText(at.add(new THREE.Vector3(0, 0.5, 0)), `+${n} Fragmento Estelar${by === 'oopi' ? ' (TÊTÊ)' : ''}`, '#c9a8ff');
   if (Math.random() < 0.15) { gainDisk('meteoro'); game.ui?.toast('💾 Tinha um <b>disco de dados</b> grudado na pedrinha! Analise no Laboratório.', 'ach'); }
   return n;
 }

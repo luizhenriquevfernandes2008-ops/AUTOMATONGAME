@@ -5,7 +5,7 @@ import { updatePost, renderFrame, resizePost, setupPost } from './post.js'; // a
 import { initPause, openPause } from './pause.js';
 import { loadAll } from './assets.js';
 import { audio } from './audio.js';
-import { buildWorld, updateMarketBoard } from './world.js';
+import { buildWorld, updateMarketBoard, updatePod } from './world.js';
 import { Economy } from './economy.js';
 import { Player } from './player.js';
 import { Builder } from './build.js';
@@ -103,8 +103,13 @@ function lockPointer(fromGesture) {
   lockFromGesture = !!fromGesture;
   clearTimeout(lockRetry);
   try {
-    const p = renderer.domElement.requestPointerLock();
-    if (p && p.catch) p.catch(() => lockFailed());
+    // movimento "cru" do mouse (sem aceleração do Windows): evita os saltos de câmera; cai pro normal se não der
+    const p = renderer.domElement.requestPointerLock({ unadjustedMovement: true });
+    if (p && p.catch) p.catch((e) => {
+      if (e?.name !== 'NotSupportedError') { lockFailed(); return; }
+      const p2 = renderer.domElement.requestPointerLock();
+      if (p2 && p2.catch) p2.catch(() => lockFailed());
+    });
   } catch { lockFailed(); }
   setTimeout(() => { if (game.mode === 'play' && !document.pointerLockElement && !game.noLock) showClickToPlay(); }, 400);
 }
@@ -497,6 +502,7 @@ function loop(now) {
     c.update(dt, isActive() && !photo.on && !game.landingActive);
   }
   if (game.pet) game.pet.update(dt);
+  updatePod(dt);
   game.ui.update(dt);
   // sol/lua acompanham o jogador (sombras)
   const p = camera.position;

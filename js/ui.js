@@ -29,7 +29,7 @@ const $ = (s) => document.querySelector(s);
 const fmt = (n) => n.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 });
 // máquinas sem painel de detalhes
 export const NO_PANEL = new Set(['esteira', 'poste', 'divisor', 'juntador', 'esteira_alta', 'rampa_sobe', 'rampa_desce']);
-const XWIN = { hub: '🏠 Central', build: '🧰 Construir', machine: '⚙️ Máquina', research: '🔬 Laboratório · Pesquisas', platform: '🚀 Projeto Foguete', stats: '📊 Estatísticas', map: '🗺️ Mapa', pet: '🤖 Oopi', contracts: '📋 Quadro de Contratos', challenges: '🧩 Terminal de Desafios', projects: '📐 Projetos', mail: '📬 Correio da Manhã', friends: '🤝 Amigos', multiplayer: '🌐 Jogar junto', settings: '⚙️ Configurações' };
+const XWIN = { hub: '🏠 Central', build: '🧰 Construir', machine: '⚙️ Máquina', research: '🔬 Laboratório · Pesquisas', platform: '🚀 Projeto Foguete', stats: '📊 Estatísticas', map: '🗺️ Mapa', pet: '🐾 TÊTÊ', contracts: '📋 Quadro de Contratos', challenges: '🧩 Terminal de Desafios', projects: '📐 Projetos', mail: '📬 Correio da Manhã', friends: '🤝 Amigos', multiplayer: '🌐 Jogar junto', settings: '⚙️ Configurações' };
 // janelas que não se redesenham sozinhas (têm campos de texto)
 const NO_AUTO = new Set(['settings', 'pet', 'challenges', 'projects', 'mail', 'friends', 'multiplayer']);
 const CONTRACT_SLOTS = [{ vagas: 3, fichas: 8 }, { vagas: 4, fichas: 15 }];
@@ -247,7 +247,7 @@ export class UI {
     const p = $('#prompt');
     let html = '';
     if (game.mode === 'play' && b.hover && !b.copyMode && !b.pasteMode) {
-      if (b.hover.pet) html = `<b>Oopi</b> 💜 ${game.pet.moodText}<br>${kbd('usar')} carinho · ${kbd('peca')} tarefas`;
+      if (b.hover.pet) html = `<b>TÊTÊ</b> 💜 ${game.pet.moodText}<br>${kbd('usar')} carinho · ${kbd('peca')} tarefas`;
       else if (b.hover.pickup) html = `<b>☄️ Fragmento estelar</b><br>${kbd('usar')} pegar`;
       else if (b.hover.struct) {
         const s = b.hover.struct;
@@ -484,7 +484,7 @@ export class UI {
     }
   }
 
-  // loja de fichas 🎟️: chapéus e cores do Oopi, decoração exclusiva e vagas de contrato
+  // loja de fichas 🎟️: chapéus e cores do TÊTÊ, decoração exclusiva e vagas de contrato
   renderTokenShop(body, card) {
     const eco = game.economy;
     if (game.mp?.isGuest) { body.innerHTML = '<p class="muted">No multiplayer, a loja de fichas fica com o anfitrião 🙂</p>'; return; }
@@ -492,7 +492,7 @@ export class UI {
     const tk = (n) => `<span class="price">🎟️ ${n}</span>`;
     const hats = Object.entries(OOPI_HATS).map(([k, h]) => {
       const own = o.hats.includes(k);
-      return card({ img: thumbs['hat:' + k], name: h.nome, desc: 'Chapéu pro Oopi', foot: own ? `<button class="tk-hat" data-k="${k}">${o.hat === k ? '✔ usando (tirar)' : 'Usar'}</button>` : `${tk(h.fichas)}<button class="tk-buyhat" data-k="${k}" ${eco.tokens < h.fichas ? 'disabled' : ''}>Comprar</button>` });
+      return card({ img: thumbs['hat:' + k], name: h.nome, desc: 'Chapéu pro TÊTÊ', foot: own ? `<button class="tk-hat" data-k="${k}">${o.hat === k ? '✔ usando (tirar)' : 'Usar'}</button>` : `${tk(h.fichas)}<button class="tk-buyhat" data-k="${k}" ${eco.tokens < h.fichas ? 'disabled' : ''}>Comprar</button>` });
     }).join('');
     const colors = Object.entries(OOPI_COLORS).map(([k, c]) => {
       const own = o.colors.includes(k);
@@ -506,8 +506,8 @@ export class UI {
     const cs = contractState();
     const nextSlot = CONTRACT_SLOTS.find((x) => x.vagas > cs.slots);
     body.innerHTML = `<p class="muted">Você tem <b class="amber">🎟️ ${eco.tokens} fichas</b>. Ganhe fichas cumprindo <b>contratos</b> (📋 quadro no escritório), resolvendo <b>desafios</b> (🧩 terminal) e abrindo o <b>correio da manhã</b>.</p>
-      <h3 class="rec-h">🎩 Chapéus do Oopi <small class="muted">amizade nível ${eco.friendLevel}/5</small></h3><div class="cards">${hats}</div>
-      <h3 class="rec-h">🎨 Cor do Oopi</h3><div class="tk-colors">${colors}</div>
+      <h3 class="rec-h">🎩 Chapéus do TÊTÊ <small class="muted">amizade nível ${eco.friendLevel}/5</small></h3><div class="cards">${hats}</div>
+      <h3 class="rec-h">🎨 Cor do TÊTÊ</h3><div class="tk-colors">${colors}</div>
       <h3 class="rec-h">✨ Decoração exclusiva</h3><div class="cards">${decos}</div>
       <h3 class="rec-h">📋 Vagas de contrato</h3><div class="cards">${card({ name: `Mais uma vaga (${cs.slots} → ${nextSlot ? nextSlot.vagas : cs.slots})`, desc: 'Aceite mais contratos ao mesmo tempo.', foot: nextSlot ? `${tk(nextSlot.fichas)}<button id="tk-slot" ${eco.tokens < nextSlot.fichas ? 'disabled' : ''}>Comprar</button>` : '<span class="own">Máximo! ✨</span>' })}</div>`;
     const done = () => { audio.play('buy', { volume: 0.6 }); game.pet?.applyLook(); this.renderShop(); };

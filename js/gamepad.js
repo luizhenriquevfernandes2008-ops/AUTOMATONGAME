@@ -1,7 +1,7 @@
 // Controle (gamepad, layout padrão Xbox/PlayStation):
 // alavanca esquerda anda · direita olha · A pula · B desliza/cancela · X usa (E) · Y loja
 // LB/RB trocam a peça · LT guarda (X) · RT coloca/clica · L3 corre · R3 gira (R)
-// ↑ troca peça da construção / tarefas do Oopi · ↓ troca material · ← rádio · → guia · Select mapa · Start pausa
+// ↑ troca peça da construção / tarefas do TÊTÊ · ↓ troca material · ← rádio · → guia · Select mapa · Start pausa
 import { game } from './state.js';
 import { settings } from './settings.js';
 import { audio } from './audio.js';

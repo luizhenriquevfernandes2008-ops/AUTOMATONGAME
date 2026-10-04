@@ -254,28 +254,69 @@ function hub() {
   return { g: bake(g), size: new THREE.Vector3(4.5, 5.6, 4.5) };
 }
 
-// ─── Cápsula de pouso ───
-function pod() {
+// ─── Nave caída (onde você começa): pousou de bico no chão, torta, com a asa quebrada ───
+// O casco vai ao longo de x (bico em +x); a escotilha aberta fica no lado -z (virado pro jogador).
+// 'smoke' marca de onde sai a fumaça do motor; 'glow' é a luz de emergência piscando.
+function crashedShip() {
   const g = new THREE.Group();
-  const { cyl, add } = kit(g);
-  cyl(1.25, 1.3, 0.32, mat.dark, 0, 0.75, 0, { seg: 20 });
-  cyl(1.3, 1.3, 0.06, mat.amber, 0, 0.93, 0, { seg: 20 });
-  cyl(0.62, 1.2, 1.7, mat.steelL, 0, 1.8, 0, { seg: 20 });
-  add(new THREE.CylinderGeometry(0.98, 1.03, 0.22, 20, 1, true), new THREE.MeshStandardMaterial({ color: 0x0c2a2a, emissive: 0x3fe0cc, emissiveIntensity: 0.8, side: THREE.DoubleSide }), 0, 2.0, 0, { name: 'screen' });
-  cyl(0.6, 0.6, 0.12, mat.plate, 0, 2.7, 0, { seg: 20 });
-  cyl(0.05, 0.05, 0.9, mat.steel, 0.2, 3.15, 0, { seg: 6 });
-  add(new THREE.SphereGeometry(0.08, 10, 8), mat.amber, 0.2, 3.62, 0, { name: 'glow', clone: true });
-  // pernas
-  for (let i = 0; i < 4; i++) {
-    const a = i * Math.PI / 2 + Math.PI / 4;
-    const l = add(new THREE.BoxGeometry(0.1, 1.2, 0.1), mat.steel, Math.cos(a) * 1.25, 0.5, Math.sin(a) * 1.25);
-    l.rotation.set(Math.sin(a) * 0.45, 0, -Math.cos(a) * 0.45);
-    add(new THREE.CylinderGeometry(0.22, 0.25, 0.06, 10), mat.dark, Math.cos(a) * 1.5, 0.03, Math.sin(a) * 1.5);
+  const { box, cyl, add } = kit(g);
+  const dirt = new THREE.MeshStandardMaterial({ color: 0x4a3a2c, roughness: 1 });
+  const scorch = new THREE.MeshBasicMaterial({ color: 0x0c0b0a, transparent: true, opacity: 0.55, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+  // marca de queimado e o rastro que a nave abriu no chão
+  add(new THREE.CircleGeometry(3.6, 28), scorch, 0.4, 0.04, 0, { rx: -Math.PI / 2, shadow: false });
+  add(new THREE.PlaneGeometry(5, 1.8), scorch, -4.8, 0.045, 0.1, { rx: -Math.PI / 2, shadow: false }); // rastro de onde ela veio arrastando
+  for (const [x, z, s] of [[3.1, 0.9, 0.55], [3.4, -0.85, 0.5], [2.6, 1.2, 0.35], [2.7, -1.15, 0.4], [3.9, 0.2, 0.35]]) {
+    const m = add(new THREE.SphereGeometry(s, 9, 6), dirt, x, s * 0.25, z); m.scale.y = 0.45;
   }
-  // escotilha aberta e rampa
-  add(new THREE.BoxGeometry(0.7, 0.9, 0.12), mat.dark, 0, 1.55, -0.96, { rx: -0.33 });
-  const ramp = add(new THREE.BoxGeometry(0.7, 0.05, 1.3), mat.steel, 0, 0.55, -1.55); ramp.rotation.x = -0.55;
-  return { g: bake(g), size: new THREE.Vector3(3, 3.7, 3) };
+  // a nave em si, inclinada (bico enterrado, um pouco de lado)
+  const ship = new THREE.Group();
+  ship.position.set(0, 0.75, 0);
+  ship.rotation.set(0.12, 0, -0.17);
+  g.add(ship);
+  const sAdd = (geo, m, x, y, z, o = {}) => add(geo, m, x, y, z, { ...o, parent: ship });
+  // casco: cilindro facetado deitado, com faixas âmbar
+  sAdd(new THREE.CylinderGeometry(0.95, 1.05, 4.4, 10), mat.steelL, 0, 0, 0, { rz: Math.PI / 2 });
+  sAdd(new THREE.CylinderGeometry(1.07, 1.07, 0.16, 10), mat.amber, 0.9, 0, 0, { rz: Math.PI / 2 });
+  sAdd(new THREE.CylinderGeometry(1.07, 1.07, 0.16, 10), mat.amberDull, -1.3, 0, 0, { rz: Math.PI / 2 });
+  // bico (amassado e meio enterrado)
+  const nose = sAdd(new THREE.ConeGeometry(0.95, 1.6, 10), mat.steel, 3.0, -0.05, 0, { rz: -Math.PI / 2 });
+  nose.scale.set(1, 1, 0.92);
+  // cabine de vidro rachado em cima
+  sAdd(new THREE.SphereGeometry(0.62, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), mat.glass, 1.4, 0.72, 0, { clone: true }).scale.set(1.5, 0.75, 1);
+  for (const [a, b] of [[0.3, 0.2], [-0.4, 0.5]]) sAdd(new THREE.BoxGeometry(0.5, 0.02, 0.02), mat.dark, 1.3 + a * 0.4, 1.1, b * 0.5, { ry: a + b });
+  // asa boa (+z) e o toco da asa quebrada (-z)
+  const wing = sAdd(new THREE.BoxGeometry(2.2, 0.14, 2.3), mat.plate, -0.6, -0.35, 1.9);
+  wing.rotation.set(0.12, -0.35, 0);
+  sAdd(new THREE.BoxGeometry(1.9, 0.06, 0.18), mat.amber, -0.5, -0.27, 2.85, { ry: -0.35 });
+  const stub = sAdd(new THREE.BoxGeometry(1.2, 0.14, 0.9), mat.plate, -0.5, -0.4, -1.25);
+  stub.rotation.set(-0.3, 0.2, 0.1);
+  // cauda e motores
+  const fin = sAdd(new THREE.BoxGeometry(1.3, 1.3, 0.12), mat.plate, -1.9, 1.05, 0);
+  fin.rotation.z = -0.5;
+  sAdd(new THREE.SphereGeometry(0.11, 10, 8), mat.amber, -2.3, 1.65, 0, { name: 'glow', clone: true });
+  for (const z of [-0.5, 0.5]) {
+    sAdd(new THREE.CylinderGeometry(0.42, 0.52, 0.8, 12), mat.dark, -2.5, -0.15, z, { rz: Math.PI / 2 });
+    sAdd(new THREE.CylinderGeometry(0.32, 0.32, 0.05, 12), new THREE.MeshStandardMaterial({ color: 0x1a0c00, emissive: 0xff6a1a, emissiveIntensity: 0.6 }), -2.92, -0.15, z, { rz: Math.PI / 2 });
+  }
+  const smoke = new THREE.Object3D(); smoke.name = 'smoke'; smoke.position.set(-2.9, 0.3, 0.5); ship.add(smoke);
+  // escotilha aberta virando rampa (lado -z) e a antena entortada
+  sAdd(new THREE.BoxGeometry(1.0, 1.1, 0.08), mat.dark, -0.4, 0.05, -1.02);
+  const ramp = sAdd(new THREE.BoxGeometry(1.0, 0.07, 1.3), mat.steel, -0.4, -0.75, -1.55);
+  ramp.rotation.x = 0.55;
+  sAdd(new THREE.BoxGeometry(1.0, 0.03, 0.08), mat.amber, -0.4, -0.45, -1.05);
+  sAdd(new THREE.CylinderGeometry(0.03, 0.03, 1.0, 6), mat.steelL, 0.4, 1.3, 0.3, { rz: 0.9, rx: 0.4 });
+  // destroços espalhados (no chão, fora da nave)
+  const deb = [[-3.6, 1.8, 0.7, 0.5, 0.06, 0.4], [2.2, -2.6, 0.5, 0.35, 0.05, -0.6], [-1.4, -3.3, 0.9, 0.6, 0.07, 1.1], [4.6, 1.6, 0.4, 0.3, 0.05, 0.2]];
+  for (const [x, z, w, d, h, r] of deb) { const p = add(new THREE.BoxGeometry(w, h, d), mat.plate, x, h / 2 + 0.02, z); p.rotation.set(0.1, r, 0.08); }
+  // a asa que caiu
+  const fallen = add(new THREE.BoxGeometry(1.6, 0.12, 1.1), mat.plate, -2.6, 0.2, -2.6); fallen.rotation.set(0.25, 0.7, -0.15);
+  add(new THREE.BoxGeometry(1.4, 0.05, 0.14), mat.amberDull, -2.6, 0.29, -2.15, { ry: 0.7 });
+  // caixas de carga que sobraram (o kit)
+  box(0.6, 0.6, 0.6, mat.amberDull, 1.6, 0.3, -2.4);
+  box(0.45, 0.45, 0.45, mat.steel, 2.2, 0.23, -2.0);
+  box(0.4, 0.04, 0.4, mat.amber, 1.6, 0.62, -2.4);
+  cyl(0.25, 0.25, 0.7, mat.steelL, 0.9, 0.35, -2.9, { seg: 12 });
+  return { g: bake(g), size: new THREE.Vector3(7, 2.6, 5) };
 }
 
 // ─── Computador (1 célula): mesa com monitor (a tela de verdade é desenhada pelo jogo em cima) ───
@@ -335,7 +376,7 @@ function lamp() {
 export function buildMoreModels(M, wrap) {
   const list = {
     beltS3: beltStraight, beltC3: beltCorner, splitter3: () => router('splitter'), merger3: () => router('merger'), sorter3: () => router('sorter'),
-    miner3: miner, constructor3: constructorM, assembler3: assembler, lab3: lab, hub3: hub, pod3: pod,
+    miner3: miner, constructor3: constructorM, assembler3: assembler, lab3: lab, hub3: hub, pod3: crashedShip,
     computer3: computer, solar3: solar, lamp3: lamp, coalgen3: () => burner(true),
   };
   for (const [k, fn] of Object.entries(list)) {

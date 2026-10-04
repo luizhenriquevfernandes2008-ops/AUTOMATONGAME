@@ -2,6 +2,7 @@
 // v2 · KX-7: cada modelo passa pela paleta do trailer (kxstyle.js) ao carregar.
 import { buildBigModels } from './models3.js';
 import { buildMoreModels } from './models4.js';
+import { buildTete } from './tete.js';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CELL } from './data.js';
@@ -79,7 +80,6 @@ export const MODEL_DEFS = {
   d_coffee: [U + 'kitchenCoffeeMachine.glb', { h: 0.55 }],
   d_barrels: [S + 'barrels.glb', { fit: CELL * 0.85 }],
   d_dish: [S + 'satelliteDish_large.glb', { h: 2.2 }],
-  d_statue: [F + 'oopi.glb', { h: 2.6 }],
   // cenário
   desk: [ST + 'table-large.glb', { scale3: [1.15, 1.9, 1.05] }], // mesa da estação na altura de escrivaninha
   chairDesk: [ST + 'chair-armrest-headrest.glb', { h: 1.05 }],
@@ -143,7 +143,7 @@ export const MODEL_DEFS = {
   meteorRock: [S + 'meteor.glb', { fit: 0.9, kx: 'rock' }],
   meteorSmall: [S + 'meteor_half.glb', { fit: 0.4, center: true, kx: 'rock' }],
   crater: [S + 'craterLarge.glb', { fit: CELL * 1.5, kx: 'rock' }],
-  // v1.3: contratos, desafios, discos, Oopi e loja de fichas
+  // v1.3: contratos, desafios, discos, TÊTÊ e loja de fichas
   dockBase: [S + 'platform_center.glb', { fit: CELL * 0.98 }],
   boxCard: [U + 'cardboardBoxClosed.glb', { fit: 0.55 }],
   boxCardOpen: [U + 'cardboardBoxOpen.glb', { fit: 0.6 }],
@@ -307,6 +307,14 @@ function buildProcedural() {
   // 3.0.4: minerador, construtora, montadora, esteiras estilo Satisfactory etc. (models4.js)
   buildMoreModels(M, wrap);
   M.belt = M.beltS3; M.beltCorner = M.beltC3;
+  // estátua do TÊTÊ (decoração): ele de pedra num pedestal
+  {
+    const g = new THREE.Group();
+    const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.0, 0.5, 20), new THREE.MeshStandardMaterial({ color: 0x7c786f, roughness: 0.9 }));
+    ped.position.y = 0.25; g.add(ped);
+    const t = buildTete({ stone: true }).root; t.scale.setScalar(2.6); t.position.y = 0.5; t.rotation.y = 0; g.add(t);
+    M.d_statue = wrap(g, new THREE.Vector3(2, 0.5 + 0.78 * 2.6, 2));
+  }
   const beltClone = () => { const b = M.belt.clone(true); b.rotation.y = Math.PI / 2; return b; };
   // esteira elevada: esteira em cima de uma torre
   {

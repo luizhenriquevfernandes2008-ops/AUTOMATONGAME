@@ -206,7 +206,7 @@ export const MACHINES = {
   // especiais
   central: {
     nome: 'Central (HUB)', custo: { placa_ferro: 10, haste_ferro: 10 }, cat: 'especial', unico: true, tamanho: 3, prefixo: 'central', model: 'hub3',
-    desc: 'O coração da base: os Marcos (tiers), a Bancada pra fabricar na mão e um armazém. Monte perto da cápsula.', solido: true,
+    desc: 'O coração da base: os Marcos (tiers), a Bancada pra fabricar na mão e um armazém. Monte perto da nave.', solido: true,
   },
   bancada: {
     nome: 'Bancada', custo: { placa_ferro: 4, haste_ferro: 4 }, u: 'm0_1', cat: 'especial', prefixo: 'bancada', tamanho: 3, model: 'workbench3',
@@ -444,7 +444,7 @@ export const ACHIEVEMENTS = [
   { id: 'chuva', nome: 'Cantando na chuva', desc: 'Fique na chuva.', icone: '🌧️' },
   { id: 'foto', nome: 'Fotógrafo', desc: 'Tire uma foto no modo foto.', icone: '📷' },
   { id: 'cafe_10', nome: 'Cafeinado', desc: 'Tome 10 cafezinhos.', icone: '☕', oculto: true },
-  { id: 'pet', nome: 'Melhor amigo', desc: 'Faça carinho no Oopi.', icone: '💜' },
+  { id: 'pet', nome: 'Melhor amigo', desc: 'Faça carinho no TÊTÊ.', icone: '💜' },
   { id: 'mk3', nome: 'Turbinado', desc: 'Melhore uma máquina pra Mk3.', icone: '⏫' },
   { id: 'copiar', nome: 'Ctrl+C, Ctrl+V', desc: 'Cole um grupo de máquinas.', icone: '📋' },
   { id: 'horta', nome: 'Mão verde', desc: 'Faça a primeira colheita na horta.', icone: '🌱', oculto: true },
@@ -458,7 +458,7 @@ export const ACHIEVEMENTS = [
   { id: 'feira', nome: 'Dia de feira', desc: 'Venda durante uma feira.', icone: '🎪', oculto: true },
   { id: 'overclock', nome: 'Overclock', desc: 'Melhore o hardware de um computador.', icone: '⏩', oculto: true },
   { id: 'recorde', nome: 'Recordista', desc: 'Bata um recorde da fábrica.', icone: '🏆' },
-  { id: 'oopi_tarefa', nome: 'Oopi ajudante', desc: 'Peça uma tarefa pro Oopi.', icone: '🤖' },
+  { id: 'oopi_tarefa', nome: 'TÊTÊ ajudante', desc: 'Peça uma tarefa pro TÊTÊ.', icone: '🤖' },
   // v1.3
   { id: 'contrato', nome: 'Negócio fechado', desc: 'Cumpra um contrato.', icone: '📋', oculto: true },
   { id: 'contratos_25', nome: 'Fornecedor oficial', desc: 'Cumpra 25 contratos.', icone: '🤝', oculto: true },
@@ -477,15 +477,15 @@ export const ACHIEVEMENTS = [
   { id: 'correio_7', nome: 'Freguesia fiel', desc: 'Abra o correio da manhã 7 dias seguidos.', icone: '📬', oculto: true },
   { id: 'projeto', nome: 'Projetista', desc: 'Salve um projeto de máquinas.', icone: '📐' },
   { id: 'album', nome: 'Colecionador(a)', desc: 'Descubra todos os itens do álbum.', icone: '📖' },
-  { id: 'chapeu', nome: 'Estiloso', desc: 'Coloque um chapéu no Oopi.', icone: '🎩', oculto: true },
-  { id: 'amizade', nome: 'Amigos pra sempre', desc: 'Chegue à amizade nível 5 com o Oopi.', icone: '💞', oculto: true },
+  { id: 'chapeu', nome: 'Estiloso', desc: 'Coloque um chapéu no TÊTÊ.', icone: '🎩', oculto: true },
+  { id: 'amizade', nome: 'Amigos pra sempre', desc: 'Chegue à amizade nível 5 com o TÊTÊ.', icone: '💞', oculto: true },
   // v1.4
   { id: 'semanal', nome: 'Toda semana tem', desc: 'Resolva um desafio da semana.', icone: '📅', oculto: true },
   { id: 'placar', nome: 'Competição saudável', desc: 'Coloque a nota de um amigo no placar da semana.', icone: '🏁', oculto: true },
   { id: 'visita', nome: 'Visita de cortesia', desc: 'Visite a fábrica de um amigo.', icone: '👀', oculto: true },
   { id: 'parceria', nome: 'Juntos somos mais', desc: 'Conclua uma parceria com um amigo.', icone: '🤝', oculto: true },
   { id: 'braco', nome: 'Mão na massa', desc: 'Mova 50 itens com braços robóticos.', icone: '🦾' },
-  { id: 'oopi_prog', nome: 'Oopi, obedeça!', desc: 'Dê uma ordem pro Oopi por código.', icone: '📟' },
+  { id: 'oopi_prog', nome: 'TÊTÊ, obedeça!', desc: 'Dê uma ordem pro TÊTÊ por código.', icone: '📟' },
 ];
 
 // Contratos: clientes e o que eles gostam de pedir
@@ -507,7 +507,7 @@ export const RARITY = {
   lendario: { nome: 'Lendário', mult: 3, fichas: 4, cor: '#ffcf5c', prazo: 1500 },
 };
 
-// Loja de fichas 🎟️: chapéus e cores do Oopi
+// Loja de fichas 🎟️: chapéus e cores do TÊTÊ
 export const OOPI_HATS = {
   flor: { nome: 'Florzinha', model: 'hat_flower', fichas: 3, y: 0.02 },
   cone: { nome: 'Cone de obra', model: 'hat_cone', fichas: 4, y: -0.02 },
@@ -524,9 +524,9 @@ export const OOPI_COLORS = {
   dourado: { nome: 'Dourado', cor: 0xffcf5c, fichas: 4 },
   grafite: { nome: 'Grafite', cor: 0x555a6a, fichas: 3 },
 };
-// amizade do Oopi: pontos pra cada nível (carinho +1, tarefa +3)
+// amizade do TÊTÊ: pontos pra cada nível (carinho +1, tarefa +3)
 export const FRIEND_LEVELS = [0, 10, 30, 60, 100];
-export const FRIEND_PERKS = ['', 'Ganha a florzinha de presente 🌼', 'Pega as pedrinhas de meteoro sozinho quando está perto', 'Ganha a coroa de cristal de presente 👑', 'Oopi sortudo: +1 ficha a cada contrato raro ou lendário'];
+export const FRIEND_PERKS = ['', 'Ganha a florzinha de presente 🌼', 'Pega as pedrinhas de meteoro sozinho quando está perto', 'Ganha a coroa de cristal de presente 👑', 'TÊTÊ sortudo: +1 ficha a cada contrato raro ou lendário'];
 
 // Correio da manhã: presente de cada dia da sequência (repete a cada 7)
 export const DAILY = [
@@ -561,7 +561,7 @@ export const DECOR = {
   cafeteira: { nome: 'Cafeteira', preco: 60, nivel: 4, model: 'd_coffee', bonus: '+4% velocidade nas máquinas perto' },
   barris: { nome: 'Barris', preco: 30, nivel: 4, model: 'd_barrels', bonus: '+3% velocidade nas máquinas perto' },
   antena: { nome: 'Antena Parabólica', preco: 150, nivel: 5, model: 'd_dish', bonus: '+5% CPU e velocidade perto' },
-  estatua: { nome: 'Estátua do Oopi', preco: 1500, nivel: 8, model: 'd_statue', bonus: '+10% CPU e velocidade num raio grande' },
+  estatua: { nome: 'Estátua do TÊTÊ', preco: 1500, nivel: 8, model: 'd_statue', bonus: '+10% CPU e velocidade num raio grande' },
   // exclusivos da loja de fichas 🎟️
   astronauta: { nome: 'Astronauta', preco: 0, fichas: 6, nivel: 1, model: 'd_astronaut', bonus: '+6% CPU nos computadores perto' },
   alien: { nome: 'Alienzinho', preco: 0, fichas: 6, nivel: 1, model: 'd_alien', bonus: '+5% velocidade nas máquinas perto' },
@@ -594,7 +594,7 @@ export const UPGRADES = {
 export function xpForLevel(level) { return Math.round(100 * Math.pow(1.6, level - 1)); }
 export function unlocksAt() { return []; }
 
-// kit que vem na cápsula de pouso
+// kit que sobrou da nave caída
 export const START_KIT = { placa_ferro: 40, haste_ferro: 30, parafuso: 60, fio: 40, cabo: 20, concreto: 20, biomassa: 30 };
 export const START_INVENTORY = {};
 export const START_MONEY = 0;
@@ -755,7 +755,7 @@ som.som("sino")
 ];
 
 export const OBJECTIVES = [
-  { id: 'hub', texto: 'Monte a 🏠 Central (HUB) num lugar plano perto da cápsula: escolha na barra (teclas 1-9) e clique. Ela ocupa 3×3 células.' },
+  { id: 'hub', texto: 'Monte a 🏠 Central (HUB) num lugar plano perto da nave caída: escolha na barra (teclas 1-9) e clique. Ela ocupa 3×3 células.' },
   { id: 'hand', texto: 'Segure E (ou o clique) mirando num veio de Ferro (pedras azuladas) pra minerar 10 minérios na mão.' },
   { id: 'miner', texto: 'Monte um ⛏️ Minerador num veio e um 🔥 Gerador de Biomassa perto. Ponha biomassa no gerador (E), ligue um cabo 🔌 do gerador até o minerador e aperte LIGAR nele.' },
   { id: 'm0_1', texto: 'Abra a Central (E) e pague o Marco 🏕️ Base de Pouso: libera Fornalha, Esteira e Bancada.' },

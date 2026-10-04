@@ -123,21 +123,21 @@ ${code(`b = maquina("braco1")      # baú atrás, esteira na frente
 while True:
     b.mover("motor")          # tira só os motores do baú`)}
 
-<h3>Oopi programável 🤖 <small>(amizade nível 2)</small></h3>
+<h3>TÊTÊ programável 🐾 <small>(amizade nível 2)</small></h3>
 <table>
-<tr><td><code>o = maquina("oopi")</code></td><td>O Oopi obedece programas de quem é amigo dele</td></tr>
-<tr><td><code>o.ir_para("bau1")</code>, <code>o.ir(x, z)</code>, <code>o.voltar()</code></td><td>Anda até uma máquina, uma célula ou até você (espera chegar)</td></tr>
-<tr><td><code>o.pegar("item")</code>, <code>o.soltar()</code>, <code>o.colher()</code></td><td>Pega/entrega na máquina mais perto dele, colhe o canteiro mais perto</td></tr>
-<tr><td><code>o.dizer("oi!")</code>, <code>o.pular()</code></td><td>Balãozinho de fala e comemoração 🎉</td></tr>
-<tr><td><code>o.seguir()</code>, <code>o.ficar()</code>, <code>o.carga()</code>, <code>o.humor()</code>, <code>o.amizade()</code></td><td>Modo, o que carrega, humor (0 a 100) e amizade (1 a 5)</td></tr>
+<tr><td><code>t = maquina("tete")</code></td><td>O TÊTÊ obedece programas de quem é amigo dele</td></tr>
+<tr><td><code>t.ir_para("bau1")</code>, <code>t.ir(x, z)</code>, <code>t.voltar()</code></td><td>Anda até uma máquina, uma célula ou até você (espera chegar)</td></tr>
+<tr><td><code>t.pegar("item")</code>, <code>t.soltar()</code>, <code>t.colher()</code></td><td>Pega/entrega na máquina mais perto dele, colhe o canteiro mais perto</td></tr>
+<tr><td><code>t.dizer("oi!")</code>, <code>t.pular()</code></td><td>Balãozinho de fala e comemoração 🎉</td></tr>
+<tr><td><code>t.seguir()</code>, <code>t.ficar()</code>, <code>t.carga()</code>, <code>t.humor()</code>, <code>t.amizade()</code></td><td>Modo, o que carrega, humor (0 a 100) e amizade (1 a 5)</td></tr>
 </table>
-${code(`o = maquina("oopi")
+${code(`t = maquina("tete")
 while True:
-    o.ir_para("bau1")
-    o.pegar("chip")
-    o.ir_para("doca_entrega1")
-    o.soltar()
-    o.dizer("entreguei! 📦")`)}
+    t.ir_para("bau1")
+    t.pegar("chip")
+    t.ir_para("doca_entrega1")
+    t.soltar()
+    t.dizer("entreguei! 📦")`)}
 
 <h3>Bibliotecas 📚</h3>
 <p>Na aba <b>Bibliotecas</b> você escreve funções uma vez. Em qualquer computador: <code>importar("util")</code> e as funções ficam disponíveis.</p>

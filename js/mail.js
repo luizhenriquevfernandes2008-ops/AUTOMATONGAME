@@ -14,7 +14,7 @@ function daysBetween(a, b) {
 }
 const HEADLINES = [
   (e) => `Fábrica local já vendeu ${fmt(e.stats.soldCount)} itens; vizinhos pedem autógrafo`,
-  (e) => `Oopi é eleito "robô mais fofo do bairro" pelo ${Math.max(2, e.level)}º ano seguido`,
+  (e) => `TÊTÊ é eleito "bichinho mais fofo de KX-7" pelo ${Math.max(2, e.level)}º ano seguido`,
   (e) => (e.moneyPerMinute() > 1 ? `Economistas explicam: $ ${fmt(e.moneyPerMinute())} por minuto é "muito café"` : 'Fábrica acorda cedo e passa um cafezinho ☕'),
   (e) => `Cientistas confirmam: ${e.techs.length} pesquisas concluídas e nenhuma explosão`,
   () => 'Bossa nova volta às paradas; esteiras dançam no ritmo',

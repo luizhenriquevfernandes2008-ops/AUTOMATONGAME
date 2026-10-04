@@ -13,7 +13,7 @@ export const ACTIONS = [
   { id: 'girar', nome: 'Girar peça', def: 'KeyR', grupo: 'fabrica' },
   { id: 'guardar', nome: 'Guardar / desmontar', def: 'KeyX', grupo: 'fabrica' },
   { id: 'soltar', nome: 'Soltar da mão', def: 'KeyQ', grupo: 'fabrica' },
-  { id: 'peca', nome: 'Construção: trocar peça · Oopi: tarefas', def: 'KeyF', grupo: 'fabrica' },
+  { id: 'peca', nome: 'Construção: trocar peça · TÊTÊ: tarefas', def: 'KeyF', grupo: 'fabrica' },
   { id: 'material', nome: 'Construção: trocar material/cor', def: 'KeyT', grupo: 'fabrica' },
   { id: 'copiar', nome: 'Copiar grupo', def: 'KeyC', grupo: 'fabrica' },
   { id: 'colar', nome: 'Colar grupo', def: 'KeyV', grupo: 'fabrica' },

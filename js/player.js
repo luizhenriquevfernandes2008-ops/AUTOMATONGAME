@@ -27,6 +27,7 @@ export class Player {
     this.camera = camera;
     this.controls = new PointerLockControls(camera, dom);
     this.controls.pointerSpeed = 0.8;
+    this.filterMouse();
     this.vel = new THREE.Vector3();
     this.keys = {};
     this.onGround = true;
@@ -51,6 +52,30 @@ export class Player {
     });
     addEventListener('keyup', (e) => { this.keys[e.code] = false; });
     addEventListener('blur', () => this.stop());
+  }
+
+  // Os navegadores (Chromium no Windows, principalmente) às vezes mandam um movimento de mouse gigante
+  // do nada, ou logo depois de travar o mouse: a câmera "teleportava" pra olhar outro lugar.
+  // Aqui esses picos isolados são descartados antes de girar a câmera.
+  filterMouse() {
+    const c = this.controls;
+    const doc = c.domElement.ownerDocument;
+    doc.removeEventListener('mousemove', c._onMouseMove);
+    const turn = c._onMouseMove;
+    let lockT = 0, avg = 0, lastT = 0;
+    doc.addEventListener('pointerlockchange', () => { lockT = performance.now(); avg = 0; });
+    c._onMouseMove = (e) => {
+      if (!c.isLocked) return;
+      const now = performance.now();
+      const m = Math.abs(e.movementX) + Math.abs(e.movementY);
+      if (now - lastT > 150) avg = 0; // mouse estava parado
+      lastT = now;
+      if (now - lockT < 150 && m > 30) return; // salto logo depois de travar
+      if (m > 220 && m > avg * 6 + 80) { avg *= 0.8; return; } // pico isolado
+      avg = avg * 0.75 + m * 0.25;
+      turn(e);
+    };
+    doc.addEventListener('mousemove', c._onMouseMove);
   }
 
   get position() { return this.camera.position; }
